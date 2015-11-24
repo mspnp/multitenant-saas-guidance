@@ -8,7 +8,7 @@
 
 <form asp-action="UpdateTitle" method="post" asp-route-id="@Model.Id" class="form-horizontal" role="form">
     <div class="form-group">
-        <input asp-for="Id" type="hidden"/>
+        <input asp-for="Id" type="hidden" />
         <input asp-for="ExistingTitle" type="hidden" />
         <span asp-validation-for="Id" class="text-danger"></span>
     </div>
@@ -30,5 +30,4 @@
     </div>
 
     @Html.Partial("~/Views/Shared/_ConfirmPartial")
-
 </form>

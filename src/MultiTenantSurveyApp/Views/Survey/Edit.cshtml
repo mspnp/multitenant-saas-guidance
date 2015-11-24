@@ -4,16 +4,14 @@
 }
 <h2>@ViewData["Title"]</h2>
 
-
-
 <div class="list-group container">
     <form asp-action="EditTitle" method="post" asp-route-id="@Model.Id" class="form-horizontal" role="form">
         <div class="list-group-item">
             <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <input asp-for="Id" type="hidden"/>
+                <input asp-for="Id" type="hidden" />
                 <span asp-validation-for="Id" class="text-danger"></span>
-                <input asp-for="Title" type="hidden"/>
+                <input asp-for="Title" type="hidden" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
@@ -36,7 +34,6 @@
                 </div>
             </div>
         </div>
-
     </form>
 
 

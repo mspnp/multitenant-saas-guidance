@@ -6,8 +6,6 @@
 
 @Html.Partial("~/Views/Shared/_ValidationPartial")
 
-<div>
-    <form asp-action="Create" method="post">
-        @Html.Partial("~/Views/Shared/_QuestionEditPartial", Model)
-    </form>
-</div>
+<form asp-action="Create" method="post">
+    @Html.Partial("~/Views/Shared/_QuestionEditPartial", Model)
+</form>

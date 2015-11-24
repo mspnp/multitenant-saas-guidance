@@ -8,11 +8,9 @@
 
 @Html.Partial("~/Views/Shared/_ValidationPartial")
 
-<div>
-    <form asp-action="Delete" method="POST" asp-route-id="@Model.Id">
-        @Html.Partial("~/Views/Shared/_ConfirmPartial")
-    </form>
-</div>
+<form asp-action="Delete" method="POST" asp-route-id="@Model.Id">
+    @Html.Partial("~/Views/Shared/_ConfirmPartial")
+</form>
 
 @Html.Partial("~/Views/Shared/_SurveyDetailPartial", Model)
 

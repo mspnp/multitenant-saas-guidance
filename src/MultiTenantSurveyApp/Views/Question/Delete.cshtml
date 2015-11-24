@@ -9,46 +9,44 @@
 
 @Html.Partial("~/Views/Shared/_ValidationPartial")
 
-<div>
-    <form asp-action="Delete" method="post">
-        <div class="form-group">
-            <input asp-for="Id" type="hidden" />
-            <input asp-for="SurveyId" type="hidden" />
-            <input asp-for="Text" type="hidden" />
-            <input asp-for="Type" type="hidden" />
-            <input asp-for="PossibleAnswers" type="hidden" />
+<form asp-action="Delete" method="post">
+    <div class="form-group">
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="SurveyId" type="hidden" />
+        <input asp-for="Text" type="hidden" />
+        <input asp-for="Type" type="hidden" />
+        <input asp-for="PossibleAnswers" type="hidden" />
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DisplayNameFor(model => model.Text)
+            </div>
+            <div class="col-md-5">
+                @Model.Text
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                @Html.DisplayNameFor(model => model.Type)
+            </div>
+            <div class="col-md-5">
+                @Model.Type
+            </div>
         </div>
 
-        <div class="container">
+        @if (Model.Type == QuestionType.MultipleChoice)
+        {
             <div class="row">
                 <div class="col-md-2">
-                    @Html.DisplayNameFor(model => model.Text)
+                    Possible Answers
                 </div>
-                <div class="col-md-5">
-                    @Model.Text
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    @Html.DisplayNameFor(model => model.Type)
-                </div>
-                <div class="col-md-5">
-                    @Model.Type
+                <div class="col-md-10">
+                    <textarea readonly asp-for="PossibleAnswers" rows="5" placeholder="PossibleAnswers"></textarea>
                 </div>
             </div>
-
-            @if (Model.Type == QuestionType.MultipleChoice)
-            {
-                <div class="row">
-                    <div class="col-md-2">
-                        Possible Answers
-                    </div>
-                    <div class="col-md-10">
-                        <textarea readonly asp-for="PossibleAnswers" rows="5" placeholder="PossibleAnswers"></textarea>
-                    </div>
-                </div>
-            }
-        </div>
-        @Html.Partial("~/Views/Shared/_ConfirmPartial")
-    </form>
-</div>
+        }
+    </div>
+    @Html.Partial("~/Views/Shared/_ConfirmPartial")
+</form>

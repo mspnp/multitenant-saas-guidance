@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNet.Authorization
-
-@if (User.Identity.IsAuthenticated)
+﻿@if (User.Identity.IsAuthenticated)
 {
     <ul class="nav navbar-nav navbar-right">
         <li class="navbar-text">@User.Identity.Name</li>
@@ -10,7 +8,6 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-@*        <li><a asp-controller="Account" asp-action="SignUp">Sign up</a></li>*@
         <li><a asp-controller="Account" asp-action="SignIn">Sign in</a></li>
     </ul>
 }
