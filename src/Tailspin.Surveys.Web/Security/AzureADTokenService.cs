@@ -9,9 +9,9 @@ using Microsoft.Extensions.OptionsModel;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Common.Configuration;
-using Tailspin.Surveys.TokenStorage;
 using Tailspin.Surveys.Web.Configuration;
 using Tailspin.Surveys.Web.Logging;
+using Tailspin.Surveys.TokenStorage.Redis;
 
 namespace Tailspin.Surveys.Web.Security
 {

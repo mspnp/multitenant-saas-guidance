@@ -19,7 +19,6 @@
     }
   },
   "dependencies": {
-    "Tailspin.Surveys.Common": "1.0.0-*",
-    "Tailspin.Surveys.TokenStorage": "1.0.0-*"
+    "Tailspin.Surveys.Common": "1.0.0-*"
   }
 }
