@@ -92,7 +92,7 @@ namespace Tailspin.Surveys.Web.Security
 
             return new AuthenticationContext(
                Constants.AuthEndpointPrefix + claimsPrincipal.GetTenantIdValue(),
-                await _tokenCacheService.GetCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId)
+                await _tokenCacheService.GetCacheAsync(claimsPrincipal)
                 .ConfigureAwait(false));
         }
 
@@ -149,7 +149,7 @@ namespace Tailspin.Surveys.Web.Security
         {
             Guard.ArgumentNotNull(claimsPrincipal, nameof(claimsPrincipal));
 
-            await _tokenCacheService.ClearCacheAsync(claimsPrincipal.GetObjectIdentifierValue(), _adOptions.ClientId)
+            await _tokenCacheService.ClearCacheAsync(claimsPrincipal)
                 .ConfigureAwait(false);
         }
     }

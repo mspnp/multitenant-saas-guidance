@@ -7,6 +7,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Tailspin.Surveys.Common;
+using System.Security.Claims;
 
 namespace Tailspin.Surveys.TokenStorage
 {
@@ -36,16 +37,16 @@ namespace Tailspin.Surveys.TokenStorage
         /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
         /// <param name="clientId">Azure Active Directory ApplicationId.</param>
         /// <returns>An instance of <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.TokenCache"/>.</returns>
-        public abstract Task<TokenCache> GetCacheAsync(string userObjectId, string clientId);
+        public abstract Task<TokenCache> GetCacheAsync(ClaimsPrincipal principal);
 
         /// <summary>
         /// Clears the token cache.
         /// </summary>
         /// <param name="userObjectId">Azure Active Directory user's ObjectIdentifier.</param>
         /// <param name="clientId">Azure Active Directory Client Id.</param>
-        public virtual async Task ClearCacheAsync(string userObjectId, string clientId)
+        public virtual async Task ClearCacheAsync(ClaimsPrincipal principal)
         {
-            var cache = await GetCacheAsync(userObjectId, clientId);
+            var cache = await GetCacheAsync(principal);
             cache.Clear();
         }
     }

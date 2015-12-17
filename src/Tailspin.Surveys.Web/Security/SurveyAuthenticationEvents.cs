@@ -100,7 +100,7 @@ namespace Tailspin.Surveys.Web.Security
                 await tenantManager.CreateAsync(tenant)
                     .ConfigureAwait(false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.SignUpTenantFailed(principal.GetObjectIdentifierValue(), issuerValue, ex);
                 throw;
@@ -178,65 +178,45 @@ namespace Tailspin.Surveys.Web.Security
         public override async Task AuthenticationValidated(AuthenticationValidatedContext context)
         {
             var principal = context.AuthenticationTicket.Principal;
-            var accessTokenService = context.HttpContext.RequestServices.GetService<IAccessTokenService>();
-            try
+            var userId = principal.GetObjectIdentifierValue();
+            var tenantManager = context.HttpContext.RequestServices.GetService<TenantManager>();
+            var userManager = context.HttpContext.RequestServices.GetService<UserManager>();
+            var issuerValue = principal.GetIssuerValue();
+            _logger.AuthenticationValidated(userId, issuerValue);
+
+            // Normalize the claims first.
+            NormalizeClaims(principal);
+            var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue)
+                .ConfigureAwait(false);
+
+            if (context.IsSigningUp())
             {
-                var userId = principal.GetObjectIdentifierValue();
-                var tenantManager = context.HttpContext.RequestServices.GetService<TenantManager>();
-                var userManager = context.HttpContext.RequestServices.GetService<UserManager>();
-                var issuerValue = principal.GetIssuerValue();
-                _logger.AuthenticationValidated(userId, issuerValue);
-
-                // Normalize the claims first.
-                NormalizeClaims(principal);
-                var tenant = await tenantManager.FindByIssuerValueAsync(issuerValue)
-                    .ConfigureAwait(false);
-
-                if (context.IsSigningUp())
+                // Originally, we were checking to see if the tenant was non-null, however, this would not allow
+                // permission changes to the application in AAD since a re-consent may be required.  Now we just don't
+                // try to recreate the tenant.
+                if (tenant == null)
                 {
-                    // Originally, we were checking to see if the tenant was non-null, however, this would not allow
-                    // permission changes to the application in AAD since a re-consent may be required.  Now we just don't
-                    // try to recreate the tenant.
-                    if (tenant == null)
-                    {
-                        tenant = await SignUpTenantAsync(context, tenantManager)
-                            .ConfigureAwait(false);
-                    }
-
-                    // In this case, we need to go ahead and set up the user signing us up.
-                    await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
-                        .ConfigureAwait(false);
-                }
-                else
-                {
-                    if (tenant == null)
-                    {
-                        _logger.UnregisteredUserSignInAttempted(userId, issuerValue);
-                        throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
-                    }
-
-                    await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
-                        .ConfigureAwait(false);
-
-                    // We are good, so cache our token for Web Api now.
-                    await accessTokenService.RequestAccessTokenAsync(
-                        principal,
-                        context.ProtocolMessage.Code,
-                        context.AuthenticationTicket.Properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey],
-                        _adOptions.WebApiResourceId)
+                    tenant = await SignUpTenantAsync(context, tenantManager)
                         .ConfigureAwait(false);
                 }
 
-            }
-            catch
-            {
-                // If an exception is thrown within this event, the user is never set on the OWIN middleware,
-                // so there is no need to sign out.  However, the access token could have been put into the
-                // cache so we need to clean it up.
-                await accessTokenService.ClearCacheAsync(principal)
+                // In this case, we need to go ahead and set up the user signing us up.
+                await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
                     .ConfigureAwait(false);
-                throw;
             }
+            else
+            {
+                if (tenant == null)
+                {
+                    _logger.UnregisteredUserSignInAttempted(userId, issuerValue);
+                    throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
+                }
+
+                await CreateOrUpdateUserAsync(context.AuthenticationTicket, userManager, tenant)
+                    .ConfigureAwait(false);
+            }
+
+
         }
 
         /// <summary>
@@ -253,9 +233,28 @@ namespace Tailspin.Surveys.Web.Security
         // These method are overridden to make it easier to debug the OIDC auth flow.
 
         // ReSharper disable RedundantOverridenMember
-        public override Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
+        public override async Task AuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
         {
-            return base.AuthorizationCodeReceived(context);
+            var principal = context.AuthenticationTicket.Principal;
+            var accessTokenService = context.HttpContext.RequestServices.GetService<IAccessTokenService>();
+            try
+            {
+                await accessTokenService.RequestAccessTokenAsync(
+                    principal,
+                    context.ProtocolMessage.Code,
+                    context.AuthenticationTicket.Properties.Items[OpenIdConnectDefaults.RedirectUriForCodePropertiesKey],
+                    _adOptions.WebApiResourceId)
+                    .ConfigureAwait(false);
+            }
+            catch
+            {
+                // If an exception is thrown within this event, the user is never set on the OWIN middleware,
+                // so there is no need to sign out.  However, the access token could have been put into the
+                // cache so we need to clean it up.
+                await accessTokenService.ClearCacheAsync(principal)
+                    .ConfigureAwait(false);
+                throw;
+            }
         }
 
         public override Task AuthorizationResponseReceived(AuthorizationResponseReceivedContext context)
