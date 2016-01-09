@@ -64,7 +64,7 @@ namespace MultiTentantSurveyAppTests
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
             target.Handle(authzContext, Operations.Read, survey);
-            Assert.True(authzContext.HasFailed);
+            Assert.False(authzContext.HasSucceeded);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace MultiTentantSurveyAppTests
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
             target.Handle(authzContext, Operations.Update, survey);
-            Assert.True(authzContext.HasFailed);
+            Assert.False(authzContext.HasSucceeded);
         }
 
         [Fact]
@@ -131,7 +131,7 @@ namespace MultiTentantSurveyAppTests
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
             target.Handle(authzContext, Operations.Delete, survey);
-            Assert.True(authzContext.HasFailed);
+            Assert.False(authzContext.HasSucceeded);
         }
 
         [Fact]
@@ -181,7 +181,7 @@ namespace MultiTentantSurveyAppTests
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
             target.Handle(authzContext, Operations.Delete, survey);
-            Assert.True(authzContext.HasFailed);
+            Assert.False(authzContext.HasSucceeded);
         }
 
         [Fact]
@@ -236,7 +236,7 @@ namespace MultiTentantSurveyAppTests
             var authzContext = new AuthorizationContext(new IAuthorizationRequirement[] { }, principal, survey);
             var target = new TestableSurveyAuthorizationHandler();
             target.Handle(authzContext, Operations.Create, survey);
-            Assert.True(authzContext.HasFailed);
+            Assert.False(authzContext.HasSucceeded);
         }
     }
 
