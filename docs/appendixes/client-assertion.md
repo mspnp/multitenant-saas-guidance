@@ -6,7 +6,7 @@ When using authorization code flow or hybrid flow in OpenID Connect, the client 
 
 ![Client secret](../media/client-assertion/client-secret.png)
 
-One way to authenticate the client is by using a client secret. That's how the [Tailspin Surveys](../02-tailspin-scenario.md) application is configured by default.
+One way to authenticate the client is by using a client secret. That's how the [Tailspin Surveys][Surveys] application is configured by default.
 
 Here is an example request from the client to the IDP, requesting an access token. Note the `client_secret` parameter.
 
@@ -19,7 +19,7 @@ Here is an example request from the client to the IDP, requesting an access toke
       &grant_type=authorization_code
       &code=PG8wJG6Y...
 
-The secret is just a string, so you have to make sure not to leak the value. The best practice is to keep the client secret out of source control. When you deploy to Azure, store the secret in an [app setting](https://azure.microsoft.com/en-us/documentation/articles/web-sites-configure/).
+The secret is just a string, so you have to make sure not to leak the value. The best practice is to keep the client secret out of source control. When you deploy to Azure, store the secret in an [app setting][configure-web-app].
 
 However, anyone with access to the Azure subscription can view the app settings. Futher, there is always a temptation to check secrets into source control (e.g., in deployment scripts), share them by email, and so on.
 
@@ -45,15 +45,15 @@ Notice that the `client_secret` parameter is no longer used. Instead, the `clien
 
 This section shows how to configure the Tailspin Surveys application to use client assertion. In these steps, you will generate a self-signed certificate that is suitable for development, but not for production use.
 
-1. Run the PowerShell script [/Scripts/Setup-KeyVault.ps1](https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/Setup-KeyVault.ps1) as follows:
- 
+1. Run the PowerShell script [/Scripts/Setup-KeyVault.ps1][Setup-KeyVault] as follows:
+
         .\Setup-KeyVault.ps -Subject [subject]
 
     For the `Subject` parameter, enter any name, such as "surveysapp". The script generates a self-signed certificate and stores it in the "Current User/Personal" certificate store.
 
 2. The output from the script is a JSON fragment. Add this to the application manifest of the web app, as follows:
 
-    1. Log into the [Azure management portal](https://github.comhttps://manage.windowsazure.com) and navigate to your Azure AD directory.
+    1. Log into the [Azure management portal][azure-management-portal] and navigate to your Azure AD directory.
 
     2. Click **Applications**.
 
@@ -73,34 +73,40 @@ This section shows how to configure the Tailspin Surveys application to use clie
                     }
                   ],
 
-        > Note: Uness you are using Key Vault, only the web application needs the certificate.
-
     6.	Save your changes to the JSON file.
 
     7.	Go back to the portal. Click **Manage Manifest** > **Upload Manifest** and upload the JSON file.
 
-3. Get the thumbprint of the certificate. You can use the MMC certificate snap-in (but see [this KB article](https://support.microsoft.com/en-us/kb/2023835)) or else run the following command:
+3. Get the thumbprint of the certificate. You can use the MMC certificate snap-in (but see [this KB article][kb2023835]) or else run the following command:
 
         certutil -store -user my [subject]
 
     where `[subject]` is the value that you specified for Subject in the PowerShell script. The thumbprint is listed under "Cert Hash(sha1)". Remove the spaces between the hexadecimal numbers.
 
-4. Update your app secrets. In Solution Explorer, right-click the Tailspin.Surveys.Web project and select **Manage User Secrets**. Add an entry for "Asymmetric" as shown below:
+4. Update your app secrets. In Solution Explorer, right-click the Tailspin.Surveys.Web project and select **Manage User Secrets**. Add an entry for "Asymmetric" under "AzureAd", as shown below:
 
-        "AzureAd": {
+        {
+          "AzureAd": {
             "ClientId": "[Surveys application client ID]",
+            // "ClientSecret": "[client secret]",  << Delete this entry
             "PostLogoutRedirectUri": "https://localhost:44300/",
             "WebApiResourceId": "[App ID URI of your Survey.WebAPI application]",
-            "TenantId": "[Your tenant ID]",
             // new:
             "Asymmetric": {
-              "CertificateThumbprint": "[Thumbprint]", // Example: "105b2ff3bc842c53582661716db1b7cdc6b43ec9"
+              "CertificateThumbprint": "[certificate thumbprint]",  // Example: "105b2ff3bc842c53582661716db1b7cdc6b43ec9"
               "StoreName": "My",
               "StoreLocation": "CurrentUser",
               "ValidationRequired": "false"
             }
+          },
+          "Redis": {
+            "Configuration": "[Redis connection string]"
+          }
+        }
 
-    You must set `ValidationRequired` to false, because the certificate was not a signed by a root CA authority. In production, use a certificate that is signed by a CA authority and set `ValidationRequired` to true. 
+    You must set `ValidationRequired` to false, because the certificate was not a signed by a root CA authority. In production, use a certificate that is signed by a CA authority and set `ValidationRequired` to true.
+
+    Also delete the entry for `ClientSecret`, because it's not needed with client assertion.
 
 5. In Startup.cs, locate the code that registers the `ICredentialService`. Uncomment the line that uses `CertificateCredentialService`, and comment out the line that uses `ClientCredentialService`:
 
@@ -113,9 +119,21 @@ At run time, the web application reads the certificate from the certificate stor
 
 ## Additional resources
 
-- [Using Certificates in Azure Websites Applications](https://azure.microsoft.com/en-us/blog/using-certificates-in-azure-websites-applications/)
+- [Using Certificates in Azure Websites Applications][using-certs-in-websites]
 
 ## References
 
-- [RFC 7521](https://tools.ietf.org/html/rfc7521). Defines the general mechanism for sending a client assertion.
-- [RFC 7523](https://tools.ietf.org/html/rfc7523). Defines how to use JWT tokens for client assertion.
+- [RFC 7521][RFC7521]. Defines the general mechanism for sending a client assertion.
+- [RFC 7523][RFC7523]. Defines how to use JWT tokens for client assertion.
+
+
+<!-- Links -->
+
+[configure-web-app]: https://azure.microsoft.com/en-us/documentation/articles/web-sites-configure/
+[azure-management-portal]: https://github.comhttps://manage.windowsazure.com
+[kb2023835]: https://support.microsoft.com/en-us/kb/2023835
+[RFC7521]: https://tools.ietf.org/html/rfc7521
+[RFC7523]: https://tools.ietf.org/html/rfc7523
+[Setup-KeyVault]: https://github.com/mspnp/multitenant-saas-guidance/blob/master/scripts/Setup-KeyVault.ps1
+[Surveys]: ../02-tailspin-scenario.md
+[using-certs-in-websites]: https://azure.microsoft.com/en-us/blog/using-certificates-in-azure-websites-applications/

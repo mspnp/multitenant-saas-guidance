@@ -1,9 +1,5 @@
 ![Microsoft patterns & practices](http://pnp.azurewebsites.net/images/pnp-logo.png)
-# Building Multi-Tenant SaaS Applications on Microsoft Azure
-
-## Phase 1: Identity Management
-
-> **This guidance project is still under development**
+# Identity Management for Multitenant Applications in Microsoft Azure
 
 This project consists of:
 
@@ -29,8 +25,8 @@ The written guidance reflects what we learned in the process of building the app
 - [Securing a backend web API](docs/08-web-api.md)
     - How to use bearer tokens to authenticate calls from the web app to a backend web API.
 - Appendixes
-    - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
-    - [Using client assertion to get access tokens from Azure AD](docs/appendixes/client-assertion.md)
-    - [Understanding ASP.NET 5 authorization handlers](docs/appendixes/aspnet5-authorization.md)
     - [Federating with a customer's AD FS](docs/appendixes/adfs.md)
-
+    - [Using client assertion to get access tokens from Azure AD](docs/appendixes/client-assertion.md)
+    - [Using Key Vault to protect application secrets](docs/appendixes/key-vault.md)
+    - [Overview of OAuth 2 and OpenID Connect](docs/appendixes/about-oauth2-oidc.md)
+    - [Understanding ASP.NET 5 authorization handlers](docs/appendixes/aspnet5-authorization.md)
