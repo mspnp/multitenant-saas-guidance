@@ -100,16 +100,6 @@ namespace Tailspin.Surveys.Data.DataStore
                 .ConfigureAwait(false);
         }
 
-        public async Task<Survey> GetSurveyWithContributorsAsync(int id)
-        {
-            var survey = await _dbContext.Surveys
-                .Include(s => s.Contributors)
-                .ThenInclude(x => x.User)
-                .SingleOrDefaultAsync(s => s.Id == id)
-                .ConfigureAwait(false);
-            return survey;
-        }
-
         public async Task<Survey> UpdateSurveyAsync(Survey survey)
         {
             _dbContext.Surveys.Attach(survey);
