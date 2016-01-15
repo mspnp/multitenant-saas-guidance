@@ -2,12 +2,25 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
+using System;
 
 namespace Tailspin.Surveys.Data.DataModels
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext()
+        {
+
+        }
+
+        // For unit testing
+        public ApplicationDbContext(IServiceProvider provider, DbContextOptions options) : base(provider, options)
+        {
+
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
