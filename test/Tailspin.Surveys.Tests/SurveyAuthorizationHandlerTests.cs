@@ -238,6 +238,12 @@ namespace MultiTentantSurveyAppTests
             target.Handle(authzContext, Operations.Create, survey);
             Assert.False(authzContext.HasSucceeded);
         }
+
+        [Fact]
+        public void FailingTest()
+        {
+            Assert.True(false);
+        }
     }
 
     internal class TestableSurveyAuthorizationHandler : SurveyAuthorizationHandler
