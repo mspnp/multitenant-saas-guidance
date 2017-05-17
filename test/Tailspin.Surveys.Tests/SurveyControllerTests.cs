@@ -86,6 +86,10 @@ namespace MultiTentantSurveyAppTests
             _surveyService.Setup(c => c.AddContributorRequestAsync(It.IsAny<ContributorRequest>()))
                 .ReturnsAsync(apiResult.Object)
                 .Callback<ContributorRequest>(c => invitations.Add(c));
+            var getSurveyContributorsApiResult = new Mock<ApiResult<ContributorsDTO>>();
+            getSurveyContributorsApiResult.SetupGet(r => r.Succeeded).Returns(false);
+            _surveyService.Setup(c => c.GetSurveyContributorsAsync(It.IsAny<int>()))
+                .ReturnsAsync(getSurveyContributorsApiResult.Object);
 
             // RequestContributor looks for existing contributors
             var contributorsDto = new ContributorsDTO

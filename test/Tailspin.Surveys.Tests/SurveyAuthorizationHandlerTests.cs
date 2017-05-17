@@ -222,7 +222,7 @@ namespace MultiTentantSurveyAppTests
         }
 
         [Fact]
-        public void Handle_Create_FailesForUserWithNoCreatorRoleAssignments()
+        public void Handle_Create_FailsForUserWithNoCreatorRoleAssignments()
         {
             var survey = new Survey("test survey") { OwnerId = 54321, TenantId = 12345 };
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -237,6 +237,12 @@ namespace MultiTentantSurveyAppTests
             var target = new TestableSurveyAuthorizationHandler();
             target.Handle(authzContext, Operations.Create, survey);
             Assert.False(authzContext.HasSucceeded);
+        }
+
+        [Fact]
+        public void FailingTest()
+        {
+            Assert.True(false);
         }
     }
 
