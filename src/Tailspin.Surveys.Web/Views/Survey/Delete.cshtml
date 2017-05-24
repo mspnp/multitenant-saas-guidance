@@ -6,12 +6,12 @@
 
 <h3 class="alert-danger">Are you sure you want to delete this survey?</h3>
 
-@Html.Partial("~/Views/Shared/_ValidationPartial")
+@Html.Partial("_ValidationPartial")
 
 <form asp-action="Delete" method="POST" asp-route-id="@Model.Id">
-    @Html.Partial("~/Views/Shared/_ConfirmPartial")
+    @Html.Partial("_ConfirmPartial")
 </form>
 
-@Html.Partial("~/Views/Shared/_SurveyDetailPartial", Model)
+@Html.Partial("_SurveyDetailPartial", Model)
 
 

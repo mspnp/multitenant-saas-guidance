@@ -4,8 +4,8 @@
 }
 <h2>@ViewData["Title"]</h2>
 
-@Html.Partial("~/Views/Shared/_ValidationPartial")
+@Html.Partial("_ValidationPartial")
 
 <form asp-action="Edit" method="post">
-    @Html.Partial("~/Views/Shared/_QuestionEditPartial", Model)
+    @Html.Partial("_QuestionEditPartial", Model)
 </form>

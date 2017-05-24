@@ -7,7 +7,7 @@
 
 <h3>Are you sure you want to delete this question?</h3>
 
-@Html.Partial("~/Views/Shared/_ValidationPartial")
+@Html.Partial("_ValidationPartial")
 
 <form asp-action="Delete" method="post">
     <div class="form-group">
@@ -48,5 +48,5 @@
             </div>
         }
     </div>
-    @Html.Partial("~/Views/Shared/_ConfirmPartial")
+    @Html.Partial("_ConfirmPartial")
 </form>
