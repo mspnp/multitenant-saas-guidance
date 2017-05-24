@@ -8,6 +8,8 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" />
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Tailspin.Surveys.Web\Tailspin.Surveys.Web.csproj" />
     <ProjectReference Include="..\..\src\Tailspin.Surveys.WebAPI\Tailspin.Surveys.WebAPI.csproj" />

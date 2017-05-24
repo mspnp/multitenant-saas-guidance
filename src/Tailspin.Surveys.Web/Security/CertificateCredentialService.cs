@@ -9,6 +9,8 @@ using Microsoft.Extensions.Options;
 using Tailspin.Surveys.Common;
 using Tailspin.Surveys.Web.Configuration;
 
+#pragma warning disable CS0649
+
 namespace Tailspin.Surveys.Web.Security
 {
     /// <summary>

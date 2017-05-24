@@ -8,6 +8,8 @@
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|x86'" />
+
   <ItemGroup>
     <ProjectReference Include="..\Tailspin.Surveys.Common\Tailspin.Surveys.Common.csproj" />
     <ProjectReference Include="..\Tailspin.Surveys.Security\Tailspin.Surveys.Security.csproj" />

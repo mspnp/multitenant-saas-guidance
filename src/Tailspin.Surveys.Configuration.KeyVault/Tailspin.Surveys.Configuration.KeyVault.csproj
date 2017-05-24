@@ -7,6 +7,8 @@
     <PackageId>Tailspin.Surveys.Configuration.KeyVault</PackageId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" />
+
   <ItemGroup>
     <ProjectReference Include="..\Tailspin.Surveys.Common\Tailspin.Surveys.Common.csproj" />
   </ItemGroup>
