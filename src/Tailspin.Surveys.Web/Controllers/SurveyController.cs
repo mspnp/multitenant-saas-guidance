@@ -212,6 +212,8 @@ namespace Tailspin.Surveys.Web.Controllers
                     return View(result.Item);
                 }
 
+                var content = result.Response.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
                 var errorResult = CheckStatusCode(result);
                 if (errorResult != null) return errorResult;
 
