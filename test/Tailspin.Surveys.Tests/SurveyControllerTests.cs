@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Xunit;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DTOs;
@@ -21,54 +20,52 @@ using Tailspin.Surveys.Web.Controllers;
 using Tailspin.Surveys.Web.Models;
 using Tailspin.Surveys.Web.Services;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using FakeItEasy;
 
 namespace MultiTentantSurveyAppTests
 {
     public class SurveyControllerTests
     {
-        private Mock<ISurveyService> _surveyService;
-        private Mock<ILogger<SurveyController>> _logger;
-        private Mock<IAuthorizationService> _authorizationService;
+        private ISurveyService _surveyService;
+        private ILogger<SurveyController> _logger;
+        private IAuthorizationService _authorizationService;
         private SurveyController _target;
 
         public SurveyControllerTests()
         {
-            _surveyService = new Mock<ISurveyService>();
-            _logger = new Mock<ILogger<SurveyController>>();
-            _authorizationService = new Mock<IAuthorizationService>();
+            _surveyService = A.Fake<ISurveyService>();
+            _logger = A.Fake<ILogger<SurveyController>>();
+            _authorizationService = A.Fake<IAuthorizationService>();
 
             var services = new ServiceCollection();
             services.AddEntityFrameworkInMemoryDatabase()
                 .AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase());
 
-            _target = new SurveyController(_surveyService.Object, _logger.Object, _authorizationService.Object);
+            _target = new SurveyController(_surveyService, _logger, _authorizationService);
         }
 
         [Fact]
         public async Task Index_GetsUserSurveys()
         {
-            var apiResultUserSurveys = new Mock<ApiResult<UserSurveysDTO>>();
-            apiResultUserSurveys.SetupGet(s => s.Succeeded).Returns(true);
-            apiResultUserSurveys.SetupGet(s => s.Item).Returns(new UserSurveysDTO());
-            _surveyService.Setup(s => s.GetSurveysForUserAsync(54321))
-                .ReturnsAsync(apiResultUserSurveys.Object);
+            var apiResultUserSurveys = A.Fake<ApiResult<UserSurveysDTO>>();
+            A.CallTo(() => apiResultUserSurveys.Succeeded).Returns(true);
+            A.CallTo(() => apiResultUserSurveys.Item).Returns(new UserSurveysDTO());
+            A.CallTo(() => _surveyService.GetSurveysForUserAsync(54321)).Returns(Task.FromResult(apiResultUserSurveys));
 
             _target.ControllerContext = CreateActionContextWithUserPrincipal("54321", "unregistereduser@contoso.com");
             var result = await _target.Index();
             var view = (ViewResult)result;
-            Assert.Same(view.ViewData.Model, apiResultUserSurveys.Object.Item);
+            Assert.Same(view.ViewData.Model, apiResultUserSurveys.Item);
         }
 
         [Fact]
         public async Task Contributors_ShowsContributorsForSurvey()
         {
             var contributors = new ContributorsDTO();
-            var apiResult = new Mock<ApiResult<ContributorsDTO>>();
-            apiResult.SetupGet(s => s.Item).Returns(contributors);
-            apiResult.SetupGet(s => s.Succeeded).Returns(true);
-
-            _surveyService.Setup(s => s.GetSurveyContributorsAsync(It.IsAny<int>()))
-                .ReturnsAsync(apiResult.Object);
+            var apiResult = A.Fake<ApiResult<ContributorsDTO>>();
+            A.CallTo(() => apiResult.Item).Returns(contributors);
+            A.CallTo(() => apiResult.Succeeded).Returns(true);
+            A.CallTo(() => _surveyService.GetSurveyContributorsAsync(A<int>.Ignored)).Returns(apiResult);
 
             var result = await _target.Contributors(12345);
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -81,11 +78,9 @@ namespace MultiTentantSurveyAppTests
         {
             var contributorRequestViewModel = new SurveyContributorRequestViewModel { SurveyId = 123, EmailAddress = "unregistereduser@contoso.com" };
 
-            var apiResult = new Mock<ApiResult>();
+            var apiResult = A.Fake<ApiResult>();
             var invitations = new List<ContributorRequest>();
-            _surveyService.Setup(c => c.AddContributorRequestAsync(It.IsAny<ContributorRequest>()))
-                .ReturnsAsync(apiResult.Object)
-                .Callback<ContributorRequest>(c => invitations.Add(c));
+            A.CallTo(() => _surveyService.AddContributorRequestAsync(A<ContributorRequest>.Ignored)).Invokes((ContributorRequest r) => invitations.Add(r)).Returns(apiResult);
 
             // RequestContributor looks for existing contributors
             var contributorsDto = new ContributorsDTO
@@ -94,12 +89,11 @@ namespace MultiTentantSurveyAppTests
                 Requests = new List<ContributorRequest>()
             };
 
-            var apiResult2 = new Mock<ApiResult<ContributorsDTO>>();
-            apiResult2.Setup(x => x.Succeeded).Returns(true);
-            apiResult2.Setup(x => x.Item).Returns(contributorsDto);
+            var apiResult2 = A.Fake<ApiResult<ContributorsDTO>>();
+            A.CallTo(() => apiResult2.Succeeded).Returns(true);
+            A.CallTo(() => apiResult2.Item).Returns(contributorsDto);
 
-            _surveyService.Setup(c => c.GetSurveyContributorsAsync(It.IsAny<int>()))
-                .ReturnsAsync(apiResult2.Object);
+            A.CallTo(() => _surveyService.GetSurveyContributorsAsync(A<int>.Ignored)).Returns(Task.FromResult(apiResult2));
 
             var result = await _target.RequestContributor(contributorRequestViewModel);
 
@@ -112,11 +106,11 @@ namespace MultiTentantSurveyAppTests
         {
             bool surveyContributorProcessed = false;
 
-            var apiResultContributors = new Mock<ApiResult<ContributorsDTO>>();
-            apiResultContributors.SetupGet(s => s.Succeeded).Returns(true);
-            _surveyService.Setup(s => s.ProcessPendingContributorRequestsAsync())
-                .Callback(() => surveyContributorProcessed = true);
-
+            var apiResultContributors = A.Fake<ApiResult<ContributorsDTO>>();
+            A.CallTo(() => apiResultContributors.Succeeded).Returns(true);
+            A.CallTo(() => _surveyService.ProcessPendingContributorRequestsAsync()).Invokes(() => surveyContributorProcessed = true)
+                .Returns(new Task<ApiResult>(() => new ApiResult()));
+            
             _target.ControllerContext = CreateActionContextWithUserPrincipal("54321", "unregistereduser@contoso.com");
             var result = await _target.Index();
 
@@ -127,9 +121,9 @@ namespace MultiTentantSurveyAppTests
 
         private ControllerContext CreateActionContextWithUserPrincipal(string userId, string emailAddress)
         {
-            var httpContext = new Mock<HttpContext>();
-            var routeData = new Mock<RouteData>();
-            var controllerActionDescriptor = new Mock<ControllerActionDescriptor>();
+            var httpContext = A.Fake<HttpContext>();
+            var routeData = A.Fake<RouteData>();
+            var controllerActionDescriptor = A.Fake<ControllerActionDescriptor>();
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, userId),
@@ -139,13 +133,13 @@ namespace MultiTentantSurveyAppTests
                 new Claim(OpenIdConnectClaimTypes.IssuerValue, "issuer")
 
             }));
-            httpContext.SetupGet(c => c.User).Returns(principal);
+            A.CallTo(() => httpContext.User).Returns(principal);
 
             return new ControllerContext(
                 new ActionContext(
-                    httpContext.Object,
-                    routeData.Object,
-                    controllerActionDescriptor.Object
+                    httpContext,
+                    routeData,
+                    controllerActionDescriptor
                     ));
         }
 

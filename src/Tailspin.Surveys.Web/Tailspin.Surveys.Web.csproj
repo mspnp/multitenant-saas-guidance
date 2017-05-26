@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFrameworks>net451;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>Tailspin.Surveys.Web</AssemblyName>
-    <OutputType>Exe</OutputType>
     <PackageId>Tailspin.Surveys.Web</PackageId>
     <UserSecretsId>aspnet-Tailspin.Survey-54d0173b-2aba-481b-a341-6fa806cfad29</UserSecretsId>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net45+win8</PackageTargetFallback>
-    <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.0.4</RuntimeFrameworkVersion>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|x86'" />
 
   <ItemGroup>
     <None Update="wwwroot\**\*;Views\**\*;Areas\**\Views">

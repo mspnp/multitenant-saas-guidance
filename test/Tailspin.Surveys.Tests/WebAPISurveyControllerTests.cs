@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
-using Moq;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DataStore;
 using Tailspin.Surveys.Data.DTOs;
@@ -17,33 +16,35 @@ using Tailspin.Surveys.Security;
 using Tailspin.Surveys.WebAPI.Controllers;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using FakeItEasy;
 
 namespace MultiTentantSurveyAppTests
 {
     public class WebAPISurveyControllerTests
     {
-        private Mock<ISurveyStore> _surveyStore;
-        private Mock<IContributorRequestStore> _contributorRequestStore;
-        private Mock<IAuthorizationService> _authorizationService;
+        private ISurveyStore _surveyStore;
+        private IContributorRequestStore _contributorRequestStore;
+        private IAuthorizationService _authorizationService;
         private SurveyController _target;
 
         public WebAPISurveyControllerTests()
         {
-            _surveyStore = new Mock<ISurveyStore>();
-            _contributorRequestStore = new Mock<IContributorRequestStore>();
-            _authorizationService = new Mock<IAuthorizationService>();
-            _target = new SurveyController(_surveyStore.Object, _contributorRequestStore.Object, _authorizationService.Object);
+            _surveyStore = A.Fake<ISurveyStore>();
+            _contributorRequestStore = A.Fake<IContributorRequestStore>();
+            _authorizationService = A.Fake<IAuthorizationService>();
+            _target = new SurveyController(_surveyStore, _contributorRequestStore, _authorizationService);
         }
 
         [Fact]
         public async Task GetSurveysForUser_ReturnsSurveys()
         {
-            _surveyStore.Setup(s => s.GetPublishedSurveysByOwnerAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<Survey>());
-            _surveyStore.Setup(s => s.GetSurveysByOwnerAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<Survey>());
-            _surveyStore.Setup(s => s.GetSurveysByContributorAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<Survey>());
+            ICollection<Survey> surveys = new List<Survey>();
+            A.CallTo(() => _surveyStore.GetPublishedSurveysByOwnerAsync(A<int>.Ignored, A<int>.Ignored, A<int>.Ignored))
+                .Returns(Task.FromResult(surveys));
+            A.CallTo(() => _surveyStore.GetSurveysByOwnerAsync(A<int>.Ignored, A<int>.Ignored, A<int>.Ignored))
+                .Returns(Task.FromResult(surveys));
+            A.CallTo(() => _surveyStore.GetSurveysByContributorAsync(A<int>.Ignored, A<int>.Ignored, A<int>.Ignored))
+                .Returns(Task.FromResult(surveys));
 
             _target.ControllerContext = CreateActionContextWithUserPrincipal("12345", "testTenantId");
             var result = await _target.GetSurveysForUser(12345);
@@ -65,11 +66,11 @@ namespace MultiTentantSurveyAppTests
         [Fact]
         public async Task GetSurveysForTenant_ReturnsSurveys()
         {
-            _surveyStore.Setup(s => s.GetPublishedSurveysByTenantAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<Survey>());
-            _surveyStore.Setup(s => s.GetUnPublishedSurveysByTenantAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
-                .ReturnsAsync(new List<Survey>());
-
+            ICollection<Survey> surveys = new List<Survey>();
+            A.CallTo(() => _surveyStore.GetPublishedSurveysByTenantAsync(A<int>.Ignored, A<int>.Ignored, A<int>.Ignored))
+                .Returns(Task.FromResult(surveys));
+            A.CallTo(() => _surveyStore.GetUnPublishedSurveysByTenantAsync(A<int>.Ignored, A<int>.Ignored, A<int>.Ignored))
+                .Returns(Task.FromResult(surveys));
             _target.ControllerContext = CreateActionContextWithUserPrincipal("12345", "12345");
             var result = await _target.GetSurveysForTenant(12345);
 
@@ -89,21 +90,22 @@ namespace MultiTentantSurveyAppTests
 
         private ControllerContext CreateActionContextWithUserPrincipal(string userId, string tenantId)
         {
-            var httpContext = new Mock<HttpContext>();
-            var routeData = new Mock<RouteData>();
-            var controllerActionDescriptor = new Mock<ControllerActionDescriptor>();
+            var httpContext = A.Fake<HttpContext>();
+            var routeData = A.Fake<RouteData>();
+            var controllerActionDescriptor = A.Fake<ControllerActionDescriptor>();
             var principal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>
             {
                 new Claim(SurveyClaimTypes.SurveyUserIdClaimType, userId),
                 new Claim(SurveyClaimTypes.SurveyTenantIdClaimType, tenantId)
 
             }));
-            httpContext.SetupGet(c => c.User).Returns(principal);
+            A.CallTo(() => httpContext.User).Returns(principal);
+
             return new ControllerContext(
                 new ActionContext(
-                    httpContext.Object,
-                    routeData.Object,
-                    controllerActionDescriptor.Object
+                    httpContext,
+                    routeData,
+                    controllerActionDescriptor
                     ));
         }
     }

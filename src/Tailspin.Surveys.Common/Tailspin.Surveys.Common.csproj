@@ -2,19 +2,17 @@
 
   <PropertyGroup>
     <Description>Tailspin.Surveys.Common Class Library</Description>
-    <TargetFrameworks>net451;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>netstandard16</TargetFrameworks>
     <AssemblyName>Tailspin.Surveys.Common</AssemblyName>
     <PackageId>Tailspin.Surveys.Common</PackageId>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|x86'" />
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.0.2" />
-    <PackageReference Include="System.Net.Http" Version="4.1.1" />
+    <PackageReference Include="System.Net.Http" Version="4.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 

@@ -6,11 +6,11 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Logging;
-using Moq;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Security;
 using Tailspin.Surveys.Security.Policy;
 using Xunit;
+using FakeItEasy;
 
 namespace MultiTentantSurveyAppTests
 {
@@ -242,8 +242,8 @@ namespace MultiTentantSurveyAppTests
 
     internal class TestableSurveyAuthorizationHandler : SurveyAuthorizationHandler
     {
-        private static Mock<ILogger> _logger = new Mock<ILogger>();
-        public TestableSurveyAuthorizationHandler():base(_logger.Object)
+        private static ILogger _logger = A.Fake<ILogger>();
+        public TestableSurveyAuthorizationHandler():base(_logger)
         {}
         internal void Handle(AuthorizationHandlerContext context, OperationAuthorizationRequirement operation, Survey resource)
         {

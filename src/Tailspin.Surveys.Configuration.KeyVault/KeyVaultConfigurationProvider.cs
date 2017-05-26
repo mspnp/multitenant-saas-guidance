@@ -31,7 +31,7 @@ namespace Tailspin.Surveys.Configuration.KeyVault
         private readonly StoreLocation _storeLocation;
         private readonly ILogger _logger;
 
-        private ClientAssertionCertificate _assertion;
+        private IClientAssertionCertificate _assertion;
 
         /// <summary>
         /// Creates the Configuration source to read shared secrets from keyvault using cert in My store of CurrentUser

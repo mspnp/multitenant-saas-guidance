@@ -2,13 +2,11 @@
 
   <PropertyGroup>
     <Description>Tailspin.Surveys.Security Class Library</Description>
-    <TargetFrameworks>net451;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>netstandard16</TargetFrameworks>
     <AssemblyName>Tailspin.Surveys.Security</AssemblyName>
     <PackageId>Tailspin.Surveys.Security</PackageId>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net451|x86'" />
 
   <ItemGroup>
     <ProjectReference Include="..\Tailspin.Surveys.Data\Tailspin.Surveys.Data.csproj" />
