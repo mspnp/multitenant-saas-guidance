@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Tailspin.Surveys.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,12 +17,13 @@ namespace Tailspin.Surveys.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ConcurrencyStamp = table.Column<string>(nullable: false),
                     Created = table.Column<DateTimeOffset>(nullable: false),
-                    IssuerValue = table.Column<string>(maxLength: 450, nullable: false)
+                    IssuerValue = table.Column<string>(maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tenant", x => x.Id);
                 });
+
             migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
@@ -31,9 +32,9 @@ namespace Tailspin.Surveys.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ConcurrencyStamp = table.Column<string>(nullable: false),
                     Created = table.Column<DateTimeOffset>(nullable: false),
-                    DisplayName = table.Column<string>(nullable: false),
-                    Email = table.Column<string>(nullable: false),
-                    ObjectId = table.Column<string>(maxLength: 450, nullable: false),
+                    DisplayName = table.Column<string>(maxLength: 256, nullable: false),
+                    Email = table.Column<string>(maxLength: 256, nullable: false),
+                    ObjectId = table.Column<string>(maxLength: 38, nullable: false),
                     TenantId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -46,6 +47,7 @@ namespace Tailspin.Surveys.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.CreateTable(
                 name: "Survey",
                 columns: table => new
@@ -67,6 +69,7 @@ namespace Tailspin.Surveys.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
+
             migrationBuilder.CreateTable(
                 name: "ContributorRequest",
                 columns: table => new
@@ -74,7 +77,7 @@ namespace Tailspin.Surveys.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Created = table.Column<DateTimeOffset>(nullable: false),
-                    EmailAddress = table.Column<string>(maxLength: 254, nullable: false),
+                    EmailAddress = table.Column<string>(maxLength: 256, nullable: false),
                     SurveyId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -87,27 +90,29 @@ namespace Tailspin.Surveys.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.CreateTable(
-                name: "Question",
+                name: "Questions",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    PossibleAnswers = table.Column<string>(nullable: false),
+                    PossibleAnswers = table.Column<string>(nullable: true),
                     SurveyId = table.Column<int>(nullable: false),
                     Text = table.Column<string>(nullable: false),
                     Type = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Question", x => x.Id);
+                    table.PrimaryKey("PK_Questions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Question_Survey_SurveyId",
+                        name: "FK_Questions_Survey_SurveyId",
                         column: x => x.SurveyId,
                         principalTable: "Survey",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.CreateTable(
                 name: "SurveyContributor",
                 columns: table => new
@@ -131,31 +136,64 @@ namespace Tailspin.Surveys.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.CreateIndex(
                 name: "SurveyIdEmailAddressIndex",
                 table: "ContributorRequest",
-                // FIX: Column 'EmailAddress' in table 'ContributorRequest' is of a type that is invalid for use as a key column in an index.
                 columns: new[] { "SurveyId", "EmailAddress" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Questions_SurveyId",
+                table: "Questions",
+                column: "SurveyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Survey_OwnerId",
+                table: "Survey",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SurveyContributor_UserId",
+                table: "SurveyContributor",
+                column: "UserId");
+
             migrationBuilder.CreateIndex(
                 name: "IssuerValueIndex",
                 table: "Tenant",
                 column: "IssuerValue",
                 unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "UserObjectIdIndex",
                 table: "User",
                 column: "ObjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_TenantId",
+                table: "User",
+                column: "TenantId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("ContributorRequest");
-            migrationBuilder.DropTable("Question");
-            migrationBuilder.DropTable("SurveyContributor");
-            migrationBuilder.DropTable("Survey");
-            migrationBuilder.DropTable("User");
-            migrationBuilder.DropTable("Tenant");
+            migrationBuilder.DropTable(
+                name: "ContributorRequest");
+
+            migrationBuilder.DropTable(
+                name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "SurveyContributor");
+
+            migrationBuilder.DropTable(
+                name: "Survey");
+
+            migrationBuilder.DropTable(
+                name: "User");
+
+            migrationBuilder.DropTable(
+                name: "Tenant");
         }
     }
 }

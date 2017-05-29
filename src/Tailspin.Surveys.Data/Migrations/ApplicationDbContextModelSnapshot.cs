@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -13,7 +13,7 @@ namespace Tailspin.Surveys.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
+                .HasAnnotation("ProductVersion", "1.1.2")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.ContributorRequest", b =>
@@ -25,7 +25,7 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<int>("SurveyId");
 
@@ -33,9 +33,9 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.HasIndex("SurveyId", "EmailAddress")
                         .IsUnique()
-                        .HasAnnotation("Relational:Name", "SurveyIdEmailAddressIndex");
+                        .HasName("SurveyIdEmailAddressIndex");
 
-                    b.HasAnnotation("Relational:TableName", "ContributorRequest");
+                    b.ToTable("ContributorRequest");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>
@@ -53,6 +53,10 @@ namespace Tailspin.Surveys.Data.Migrations
                     b.Property<int>("Type");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SurveyId");
+
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Survey", b =>
@@ -71,7 +75,9 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAnnotation("Relational:TableName", "Survey");
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Survey");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.SurveyContributor", b =>
@@ -81,6 +87,10 @@ namespace Tailspin.Surveys.Data.Migrations
                     b.Property<int>("UserId");
 
                     b.HasKey("SurveyId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SurveyContributor");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Tenant", b =>
@@ -96,15 +106,15 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.Property<string>("IssuerValue")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 1000);
+                        .HasMaxLength(1000);
 
                     b.HasKey("Id");
 
                     b.HasIndex("IssuerValue")
                         .IsUnique()
-                        .HasAnnotation("Relational:Name", "IssuerValueIndex");
+                        .HasName("IssuerValueIndex");
 
-                    b.HasAnnotation("Relational:TableName", "Tenant");
+                    b.ToTable("Tenant");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.User", b =>
@@ -120,63 +130,70 @@ namespace Tailspin.Surveys.Data.Migrations
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("ObjectId")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 38);
+                        .HasMaxLength(38);
 
                     b.Property<int>("TenantId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ObjectId")
-                        .HasAnnotation("Relational:Name", "UserObjectIdIndex");
+                        .HasName("UserObjectIdIndex");
 
-                    b.HasAnnotation("Relational:TableName", "User");
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.ContributorRequest", b =>
                 {
                     b.HasOne("Tailspin.Surveys.Data.DataModels.Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId");
+                        .WithMany("Requests")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Question", b =>
                 {
-                    b.HasOne("Tailspin.Surveys.Data.DataModels.Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId");
+                    b.HasOne("Tailspin.Surveys.Data.DataModels.Survey", "Survey")
+                        .WithMany("Questions")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.Survey", b =>
                 {
-                    b.HasOne("Tailspin.Surveys.Data.DataModels.User")
+                    b.HasOne("Tailspin.Surveys.Data.DataModels.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId");
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.SurveyContributor", b =>
                 {
-                    b.HasOne("Tailspin.Surveys.Data.DataModels.Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId");
+                    b.HasOne("Tailspin.Surveys.Data.DataModels.Survey", "Survey")
+                        .WithMany("Contributors")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Tailspin.Surveys.Data.DataModels.User")
+                    b.HasOne("Tailspin.Surveys.Data.DataModels.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Tailspin.Surveys.Data.DataModels.User", b =>
                 {
                     b.HasOne("Tailspin.Surveys.Data.DataModels.Tenant")
                         .WithMany()
-                        .HasForeignKey("TenantId");
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }
