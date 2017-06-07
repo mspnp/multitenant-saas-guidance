@@ -39,6 +39,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.2" />
