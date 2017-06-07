@@ -39,17 +39,6 @@ namespace Tailspin.Surveys.WebAPI
             }
             builder.AddEnvironmentVariables();
 
-            // Uncomment the block of code below if you want to load secrets from KeyVault
-            // It is recommended to use certs for all authentication when using KeyVault
-//#if NET451
-//            var config = builder.Build();
-//            builder.AddKeyVaultSecrets(config["AzureAd:ClientId"],
-//                config["KeyVault:Name"],
-//                config["AzureAd:Asymmetric:CertificateThumbprint"],
-//                Convert.ToBoolean(config["AzureAd:Asymmetric:ValidationRequired"]),
-//                loggerFactory);
-//#endif
-
             Configuration = builder.Build();
         }
 
