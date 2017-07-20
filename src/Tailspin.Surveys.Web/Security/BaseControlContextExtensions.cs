@@ -21,25 +21,12 @@ namespace Tailspin.Surveys.Web.Security
         {
             Guard.ArgumentNotNull(context, nameof(context));
 
-            // Note - Due to https://github.com/aspnet/Security/issues/546, we cannot get to the authentication properties
-            // from the context in the RedirectToAuthenticationEndpoint event to check for sign up.  This bug is currently
-            // slated to be fixed in the RC2 timeframe.  When this is fixed, remove the workaround that checks the HttpContext
-
             string signupValue;
-            object obj;
             // Check the HTTP context and convert to string
-            if (context.HttpContext.Items.TryGetValue("signup", out obj))
+            if ((context.Ticket == null) ||
+                (!context.Ticket.Properties.Items.TryGetValue("signup", out signupValue)))
             {
-                signupValue = (string)obj;
-            }
-            else
-            {
-                // It's not in the HTTP context, so check the authentication ticket.  If it's not there, we aren't signing up.
-                if ((context.Ticket == null) ||
-                    (!context.Ticket.Properties.Items.TryGetValue("signup", out signupValue)))
-                {
-                    return false;
-                }
+                return false;
             }
 
             // We have found the value, so see if it's valid
