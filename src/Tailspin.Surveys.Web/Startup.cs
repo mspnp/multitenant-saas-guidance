@@ -66,7 +66,6 @@ namespace Tailspin.Surveys.Web
         {
             services.Configure<SurveyAppConfiguration.ConfigurationOptions>(options => Configuration.Bind(options));
 
-#if NET451
             var configOptions = new SurveyAppConfiguration.ConfigurationOptions();
             Configuration.Bind(configOptions);
 
@@ -74,7 +73,6 @@ namespace Tailspin.Surveys.Web
             services.AddDistributedRedisCache(setup => {
                 setup.Configuration = configOptions.Redis.Configuration;
             });
-#endif
 
             // This will only add the LocalCache implementation of IDistributedCache if there is not an IDistributedCache already registered.
             services.AddMemoryCache();
