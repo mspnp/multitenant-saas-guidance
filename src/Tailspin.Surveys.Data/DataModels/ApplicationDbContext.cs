@@ -10,11 +10,7 @@ namespace Tailspin.Surveys.Data.DataModels
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext()
-        {
-
-        }
-
+ 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
 
