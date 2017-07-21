@@ -24,7 +24,6 @@ namespace Tailspin.Surveys.Web.Security
             CredentialType = AdalCredentialType.ClientCredential;
         }
 
-#if NET451
         /// <summary>
         /// Creates a new instance of the <see cref="Tailspin.Surveys.Security.AdalCredential"/>
         /// </summary>
@@ -36,7 +35,6 @@ namespace Tailspin.Surveys.Web.Security
             ClientAssertionCertificate = clientAssertionCertificate;
             CredentialType = AdalCredentialType.ClientAssertionCertificate;
         }
-#endif
 
         /// <summary>
         /// Credential type stored in this <see cref="Tailspin.Surveys.Security.AdalCredential"/> instance.
@@ -48,11 +46,9 @@ namespace Tailspin.Surveys.Web.Security
         /// </summary>
         public ClientCredential ClientCredential { get; private set; }
 
-#if NET451
         /// <summary>
         /// A <see cref="Microsoft.IdentityModel.Clients.ActiveDirectory.ClientAssertionCertificate"/> instance containing an X509 certificate that identifies the client.
         /// </summary>
         public ClientAssertionCertificate ClientAssertionCertificate { get; private set; }
-#endif
     }
 }

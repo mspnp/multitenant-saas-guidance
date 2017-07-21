@@ -49,9 +49,9 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // The AuthorizationService uses the policies in the Tailspin.Surveys.Security project
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Read))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
-            return new ObjectResult(DataMapping._surveyToDto(survey));
+            return Ok(DataMapping._surveyToDto(survey));
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
         {
             if (User.GetSurveyUserIdValue() != userId)
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             var surveys = new UserSurveysDTO();
@@ -72,7 +72,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             surveys.Own = (await _surveyStore.GetSurveysByOwnerAsync(userId)).Select(DataMapping._surveyToSummaryDto).ToArray();
             surveys.Contribute = (await _surveyStore.GetSurveysByContributorAsync(userId)).Select(DataMapping._surveyToSummaryDto).ToArray();
 
-            return new ObjectResult(surveys);
+            return Ok(surveys);
         }
 
         /// <summary>
@@ -85,13 +85,13 @@ namespace Tailspin.Surveys.WebAPI.Controllers
         {
             if (User.GetSurveyTenantIdValue() != tenantId)
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             var surveys = new TenantSurveysDTO();
             surveys.Published = (await _surveyStore.GetPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto).ToArray();
             surveys.UnPublished = (await _surveyStore.GetUnPublishedSurveysByTenantAsync(tenantId)).Select(DataMapping._surveyToSummaryDto).ToArray();
-            return new ObjectResult(surveys);
+            return Ok(surveys);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
         public async Task<IActionResult> GetPublishedSurveys()
         {
             var surveys = (await _surveyStore.GetPublishedSurveysAsync()).Select(DataMapping._surveyToDto);
-            return new ObjectResult(surveys);
+            return Ok(surveys);
         }
 
         /// <summary>
@@ -123,10 +123,10 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // Validate that the current user has Read permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Read))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
-            return new ObjectResult(new ContributorsDTO()
+            return Ok(new ContributorsDTO()
             {
                 SurveyId = id,
                 Contributors = survey.Contributors.Select(x => new UserDTO { Email = x.User.Email }).ToArray(),
@@ -191,7 +191,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // Validate that the current user has Update permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             // Apply update
@@ -199,7 +199,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             survey.Published = item.Published;
 
             await _surveyStore.UpdateSurveyAsync(survey);
-            return new ObjectResult(DataMapping._surveyToDto(survey));
+            return Ok(DataMapping._surveyToDto(survey));
         }
 
         /// <summary>
@@ -219,11 +219,11 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // Validate that the current user has Delete permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Delete))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             await _surveyStore.DeleteSurveyAsync(survey);
-            return new ObjectResult(DataMapping._surveyToDto(survey));
+            return Ok(DataMapping._surveyToDto(survey));
         }
 
         /// <summary>
@@ -254,12 +254,12 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // Validate that the current user has Update permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             await _contributorRequestStore.AddRequestAsync(item);
 
-            return new NoContentResult();
+            return NoContent();
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
                 await _contributorRequestStore.RemoveRequestAsync(contributorRequest);
             }
 
-            return new NoContentResult();
+            return NoContent();
         }
 
         /// <summary>
@@ -310,12 +310,12 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // Validate that the current user has Publish permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Publish))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             var published = await _surveyStore.PublishSurveyAsync(id);
 
-            return new ObjectResult(DataMapping._surveyToDto(published));
+            return Ok(DataMapping._surveyToDto(published));
         }
 
         /// <summary>
@@ -335,12 +335,12 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // Validate that the current user has UnPublish permissions to this survey.
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.UnPublish))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             var unpublished = await _surveyStore.UnPublishSurveyAsync(id);
 
-            return new ObjectResult(DataMapping._surveyToDto(unpublished));
+            return Ok(DataMapping._surveyToDto(unpublished));
         }
 
     }

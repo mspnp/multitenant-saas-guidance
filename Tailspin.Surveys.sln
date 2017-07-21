@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BFD4D9CF-A8BF-486D-8AEE-8DE938A8580A}"
 EndProject
@@ -20,8 +20,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tailspin.Surveys.TokenStorage", "src\Tailspin.Surveys.TokenStorage\Tailspin.Surveys.TokenStorage.csproj", "{D6317A55-173C-46CB-9C2C-797406638F0F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tailspin.Surveys.Common", "src\Tailspin.Surveys.Common\Tailspin.Surveys.Common.csproj", "{AF723D05-6DE2-4133-AA3F-F2B7EF11DC9D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tailspin.Surveys.Configuration.KeyVault", "src\Tailspin.Surveys.Configuration.KeyVault\Tailspin.Surveys.Configuration.KeyVault.csproj", "{3B62AD47-D331-49E6-B995-641FBC6CE3C9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tailspin.Surveys.Security", "src\Tailspin.Surveys.Security\Tailspin.Surveys.Security.csproj", "{06CDE42E-22B9-4E48-BAB8-8E26BA8B5A21}"
 EndProject
@@ -81,14 +79,6 @@ Global
 		{AF723D05-6DE2-4133-AA3F-F2B7EF11DC9D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF723D05-6DE2-4133-AA3F-F2B7EF11DC9D}.Release|x86.ActiveCfg = Release|Any CPU
 		{AF723D05-6DE2-4133-AA3F-F2B7EF11DC9D}.Release|x86.Build.0 = Release|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Debug|x86.Build.0 = Debug|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Release|x86.ActiveCfg = Release|Any CPU
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9}.Release|x86.Build.0 = Release|Any CPU
 		{06CDE42E-22B9-4E48-BAB8-8E26BA8B5A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{06CDE42E-22B9-4E48-BAB8-8E26BA8B5A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06CDE42E-22B9-4E48-BAB8-8E26BA8B5A21}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -108,7 +98,6 @@ Global
 		{714DA7D6-1CE1-4EA9-AF4E-91D901D50411} = {BFD4D9CF-A8BF-486D-8AEE-8DE938A8580A}
 		{D6317A55-173C-46CB-9C2C-797406638F0F} = {BFD4D9CF-A8BF-486D-8AEE-8DE938A8580A}
 		{AF723D05-6DE2-4133-AA3F-F2B7EF11DC9D} = {BFD4D9CF-A8BF-486D-8AEE-8DE938A8580A}
-		{3B62AD47-D331-49E6-B995-641FBC6CE3C9} = {BFD4D9CF-A8BF-486D-8AEE-8DE938A8580A}
 		{06CDE42E-22B9-4E48-BAB8-8E26BA8B5A21} = {BFD4D9CF-A8BF-486D-8AEE-8DE938A8580A}
 	EndGlobalSection
 EndGlobal

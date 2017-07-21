@@ -110,10 +110,6 @@ namespace Tailspin.Surveys.Web
             // Add MVC services to the services container.
             services.AddMvc();
 
-            // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
-            // You will also need to add the Microsoft.AspNetCore.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
-            // services.AddWebApiConventions();
-
             // Register application services.
 
             // This will register IDistributedCache based token cache which ADAL will use for caching access tokens.
@@ -122,7 +118,12 @@ namespace Tailspin.Surveys.Web
             services.AddScoped<ISurveysTokenService, SurveysTokenService>();
             services.AddSingleton<HttpClientService>();
 
-            // Use this for client certificate support
+            // Uncomment the following line to use client certificate credentials.
+            //services.AddSingleton<ICredentialService, CertificateCredentialService>();
+
+            // Comment out the following line if you are using client certificates.
+            services.AddSingleton<ICredentialService, ClientCredentialService>();
+
             services.AddSingleton<ICredentialService, ClientCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
@@ -161,7 +162,7 @@ namespace Tailspin.Surveys.Web
                 AutomaticAuthenticate = true,
                 AutomaticChallenge = true,
                 AccessDeniedPath = "/Home/Forbidden",
-                CookieSecure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always,
+                CookieSecure = CookieSecurePolicy.Always,
 
                 // The default setting for cookie expiration is 14 days. SlidingExpiration is set to true by default
                 ExpireTimeSpan = TimeSpan.FromHours(1),

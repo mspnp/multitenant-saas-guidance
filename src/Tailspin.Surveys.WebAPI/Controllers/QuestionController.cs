@@ -47,10 +47,10 @@ namespace Tailspin.Surveys.WebAPI.Controllers
 
             if (!await _authorizationService.AuthorizeAsync(User, question.Survey, Operations.Update))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
-            return new ObjectResult(DataMapping._questionToDto(question));
+            return Ok(DataMapping._questionToDto(question));
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
             // The AuthorizationService uses the policies in the Tailspin.Surveys.Security project
             if (!await _authorizationService.AuthorizeAsync(User, survey, Operations.Update))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
 
@@ -122,7 +122,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
 
             if (!await _authorizationService.AuthorizeAsync(User, question.Survey, Operations.Update))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
 
@@ -135,7 +135,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
 
             var result = await _questionStore.UpdateQuestionAsync(question);
 
-            return new ObjectResult(DataMapping._questionToDto(result));
+            return Ok(DataMapping._questionToDto(result));
         }
 
         /// <summary>
@@ -154,11 +154,11 @@ namespace Tailspin.Surveys.WebAPI.Controllers
 
             if (!await _authorizationService.AuthorizeAsync(User, question.Survey, Operations.Update))
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             await _questionStore.DeleteQuestionAsync(question);
-            return new NoContentResult();
+            return NoContent();
         }
     }
 }

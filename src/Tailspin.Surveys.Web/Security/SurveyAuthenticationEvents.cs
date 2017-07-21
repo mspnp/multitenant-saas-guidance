@@ -222,11 +222,7 @@ namespace Tailspin.Surveys.Web.Security
                 if (tenant == null)
                 {
                     _logger.UnregisteredUserSignInAttempted(userId, issuerValue);
-#if NET451
                     throw new SecurityTokenValidationException($"Tenant {issuerValue} is not registered");
-#else
-                    throw new SecurityException($"Tenant {issuerValue} is not registered");
-#endif
                 }
 
                 await CreateOrUpdateUserAsync(context.Ticket, userManager, tenant)

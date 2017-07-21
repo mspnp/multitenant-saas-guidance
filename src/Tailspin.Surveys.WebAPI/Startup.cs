@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Globalization;
+using Microsoft.IdentityModel.Tokens;
 using Tailspin.Surveys.Data.DataModels;
 using Tailspin.Surveys.Data.DataStore;
 using Tailspin.Surveys.Security.Policy;
@@ -106,7 +106,7 @@ namespace Tailspin.Surveys.WebAPI
             app.UseJwtBearerAuthentication(new JwtBearerOptions {
                 Audience = configOptions.AzureAd.WebApiResourceId,
                 Authority = Constants.AuthEndpointPrefix,
-                TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters {
+                TokenValidationParameters = new TokenValidationParameters {
                     ValidateIssuer = false
                 },
                 Events= new SurveysJwtBearerEvents(loggerFactory.CreateLogger<SurveysJwtBearerEvents>())
