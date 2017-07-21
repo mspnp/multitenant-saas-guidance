@@ -124,7 +124,6 @@ namespace Tailspin.Surveys.Web
             // Comment out the following line if you are using client certificates.
             services.AddSingleton<ICredentialService, ClientCredentialService>();
 
-            services.AddSingleton<ICredentialService, ClientCredentialService>();
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<SignInManager, SignInManager>();
