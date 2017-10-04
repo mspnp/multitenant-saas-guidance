@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,8 +18,6 @@ namespace Tailspin.Surveys.Web.Security
     {
         private readonly HttpContext _httpContext;
 
-        private readonly ISurveysTokenService _surveysTokenService;
-
         private readonly ILogger _logger;
 
         /// <summary>
@@ -30,16 +27,14 @@ namespace Tailspin.Surveys.Web.Security
         /// <param name="surveysTokenService">An instance of <see cref="Tailspin.Surveys.Web.Security.ISurveysTokenService"/></param>
         /// <param name="logger">An <see cref="Microsoft.Extensions.Logging.ILogger"/> implementation used for diagnostic information.</param>
         public SignInManager(IHttpContextAccessor contextAccessor,
-            ISurveysTokenService surveysTokenService,
             ILogger<SignInManager> logger)
         {
             _httpContext = contextAccessor.HttpContext;
-            _surveysTokenService = surveysTokenService;
             _logger = logger;
         }
 
         /// <summary>
-        /// Signs the currently signed in principal out of all authentication schemes and clears any access tokens from the token cache.
+        /// Signs the currently signed in principal out of all authentication schemes.
         /// </summary>
         /// <param name="redirectUrl">A Url to which the user should be redirected when sign out of AAD completes.</param>
         /// <returns>A <see cref="System.Threading.Tasks.Task{Microsoft.AspNetCore.Mvc.IActionResult}"/> implementation.</returns>
