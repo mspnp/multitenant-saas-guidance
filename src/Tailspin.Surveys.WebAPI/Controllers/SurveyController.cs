@@ -161,7 +161,7 @@ namespace Tailspin.Surveys.WebAPI.Controllers
 
             item.Id = survey.Id;
 
-            return CreatedAtRoute("GetSurvey", new { controller = "Surveys", id = survey.Id }, item);
+            return CreatedAtRoute("GetSurvey", new { controller = "Survey", id = survey.Id }, item);
         }
 
         /// <summary>
